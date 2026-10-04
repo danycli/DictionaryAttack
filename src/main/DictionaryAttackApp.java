@@ -2,6 +2,7 @@ package main;
 
 import controller.AttackController;
 import styling.stylings;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -58,19 +59,19 @@ public class DictionaryAttackApp{
         // Stats area
         Pane statsBox = stylings.innerCard(20, 130, 440, 50);
         Label statIcon = stylings.label("📄", 15, 15, 18, "#1a1a1a", false);
-        Label wordsCount = stylings.label("143,443", 60, 10, 14, "#1a1a1a", true);
+        Label wordsCount = stylings.label("----", 60, 10, 14, "#1a1a1a", true);
         Label wordsLbl = stylings.label("Total Words", 60, 27, 11, "#7a7a7a", false);
         
         Rectangle sep1 = new Rectangle(1, 30, Color.web("#d1d1d1"));
         sep1.setTranslateX(160); sep1.setTranslateY(10);
         
-        Label sizeCount = stylings.label("1.2 MB", 180, 10, 14, "#1a1a1a", true);
+        Label sizeCount = stylings.label("---", 180, 10, 14, "#1a1a1a", true);
         Label sizeLbl = stylings.label("File Size", 180, 27, 11, "#7a7a7a", false);
         
         Rectangle sep2 = new Rectangle(1, 30, Color.web("#d1d1d1"));
         sep2.setTranslateX(280); sep2.setTranslateY(10);
         
-        Label fmtCount = stylings.label(".txt", 300, 10, 14, "#1a1a1a", true);
+        Label fmtCount = stylings.label("---", 300, 10, 14, "#1a1a1a", true);
         Label fmtLbl = stylings.label("Format", 300, 27, 11, "#7a7a7a", false);
         
         statsBox.getChildren().addAll(statIcon, wordsCount, wordsLbl, sep1, sizeCount, sizeLbl, sep2, fmtCount, fmtLbl);
@@ -83,7 +84,7 @@ public class DictionaryAttackApp{
         Pane logPane = stylings.cardPane(220, 510, 480, 220);
         Label logTitle = stylings.label("⌨ Attack Log", 20, 20, 16, "#1a1a1a", true);
         Button clearBtn = stylings.secondaryButton("🗑 Clear", 390, 15, 70, 30);
-        TextArea logArea = stylings.logArea("[14:32:01] Dictionary Attack Tool initialized. Ready to start...", 20, 55, 440, 145);
+        TextArea logArea = stylings.logArea("Nothing Happened yet", 20, 55, 440, 145);
         
         logPane.getChildren().addAll(logTitle, clearBtn, logArea);
         
@@ -93,8 +94,8 @@ public class DictionaryAttackApp{
         Button readyBadge = stylings.secondaryButton("● Ready", 270, 15, 70, 25);
         readyBadge.setStyle(readyBadge.getStyle() + "-fx-background-color: #f0f0f0; -fx-border-width: 0;");
         
-        Label pctLbl = stylings.label("0%", 20, 65, 24, "#1a1a1a", true);
-        Label progressTxt = stylings.label("0 / 143,443", 280, 75, 12, "#7a7a7a", false);
+        Label pctLbl = stylings.label("--%", 20, 65, 24, "#1a1a1a", true);
+        Label progressTxt = stylings.label("0 / ---", 280, 75, 12, "#7a7a7a", false);
         
         Rectangle progBg = new Rectangle(320, 12, Color.web("#e0e0e0"));
         progBg.setTranslateX(20); progBg.setTranslateY(105);
@@ -103,7 +104,7 @@ public class DictionaryAttackApp{
         Pane candidateBox = stylings.innerCard(20, 135, 320, 60);
         Label candIcon = stylings.label("📄", 15, 20, 16, "#1a1a1a", false);
         Label candLbl = stylings.label("Current Candidate", 45, 15, 11, "#1a1a1a", false);
-        Label candVal = stylings.label("-", 45, 30, 14, "#1a1a1a", true);
+        Label candVal = stylings.label("---", 45, 30, 14, "#1a1a1a", true);
         candidateBox.getChildren().addAll(candIcon, candLbl, candVal);
         
         Button c1 = stylings.secondaryButton("", 20, 210, 70, 80); c1.setStyle(c1.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
@@ -118,12 +119,12 @@ public class DictionaryAttackApp{
         
         Button c3 = stylings.secondaryButton("", 190, 210, 85, 80); c3.setStyle(c3.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c3Icon = stylings.label("🚀", 225, 220, 16, "#1a1a1a", false);
-        Label c3Val = stylings.label("0", 228, 245, 14, "#1a1a1a", true);
+        Label c3Val = stylings.label("---", 228, 245, 14, "#1a1a1a", true);
         Label c3Lbl = stylings.label("Attempts/sec", 198, 265, 11, "#7a7a7a", false);
         
         Button c4 = stylings.secondaryButton("", 285, 210, 75, 80); c4.setStyle(c4.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c4Icon = stylings.label("📄", 315, 220, 16, "#1a1a1a", false);
-        Label c4Val = stylings.label("0", 318, 245, 14, "#1a1a1a", true);
+        Label c4Val = stylings.label("---", 318, 245, 14, "#1a1a1a", true);
         Label c4Lbl = stylings.label("Current Line", 290, 265, 11, "#7a7a7a", false);
         
         progressPane.getChildren().addAll(progTitle, readyBadge, pctLbl, progressTxt, progBg, candidateBox,

@@ -80,8 +80,10 @@ public class stylings {
             b.setStyle(baseStyle + "-fx-background-color: #e3dec9; -fx-text-fill: #1a1a1a;");
         } else {
             b.setStyle(baseStyle + "-fx-background-color: transparent; -fx-text-fill: #555555;");
-            b.setOnMouseEntered(e -> b.setStyle(baseStyle + "-fx-background-color: #ebeae4; -fx-text-fill: #1a1a1a;"));
-            b.setOnMouseExited(e -> b.setStyle(baseStyle + "-fx-background-color: transparent; -fx-text-fill: #555555;"));
+            b.setOnMouseEntered(e -> 
+                b.setStyle(baseStyle + "-fx-background-color: #ebeae4; -fx-text-fill: #1a1a1a;"));
+            b.setOnMouseExited(e -> 
+                b.setStyle(baseStyle + "-fx-background-color: transparent; -fx-text-fill: #555555;"));
         }
         return b;
     }
