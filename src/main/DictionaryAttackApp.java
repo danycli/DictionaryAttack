@@ -77,8 +77,16 @@ public class DictionaryAttackApp{
         statsBox.getChildren().addAll(statIcon, wordsCount, wordsLbl, sep1, sizeCount, sizeLbl, sep2, fmtCount, fmtLbl);
         
         Button startAttackBtn = stylings.primaryButton("▶ Start Attack", 20, 195, 440, 40);
+        //starting the attack
         
         wordlistPane.getChildren().addAll(wlTitle, wlFileLbl, wlField, browseBtn, statsBox, startAttackBtn);
+
+        startAttackBtn.setOnAction(e -> {
+            System.out.println("ActionFired");
+            AttackController at = new AttackController();
+            at.start(wlField.getText());
+        });
+        
         
         //ATTACK LOG PANE
         Pane logPane = stylings.cardPane(220, 510, 480, 220);
