@@ -116,8 +116,8 @@ if (typeof window === 'undefined') {
             loginBtn.textContent = 'Authenticating...';
 
             try {
-                // Submit to local endpoint
-                const response = await fetch('/login', {
+                // Submit to local endpoint (hardcoded to port 3000 so Live Server works)
+                const response = await fetch('http://127.0.0.1:3000/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
