@@ -52,10 +52,12 @@ public class stylings {
         b.setStyle("""
             -fx-background-color: #34373e; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;
             """);
+
         b.setOnMouseEntered(e -> 
             b.setStyle("""
                 -fx-background-color: #4f5258; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;
                 """));
+
         b.setOnMouseExited(e -> 
             b.setStyle("""
             -fx-background-color: #34373e; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;
@@ -70,7 +72,10 @@ public class stylings {
         b.setPrefSize(180, 40);
         b.setAlignment(Pos.CENTER_LEFT);
         b.setFocusTraversable(false);
-        String baseStyle = "-fx-padding: 0 0 0 15; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand; ";
+        String baseStyle = """
+        -fx-padding: 0 0 0 15; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand; 
+        """;
+
         if (active) {
             b.setStyle(baseStyle + "-fx-background-color: #e3dec9; -fx-text-fill: #1a1a1a;");
         } else {
@@ -87,9 +92,19 @@ public class stylings {
         b.setTranslateY(y);
         b.setPrefSize(width, height);
         b.setFocusTraversable(false);
-        b.setStyle("-fx-background-color: transparent; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-cursor: hand; -fx-font-size: 12px; -fx-text-fill: #333333;");
-        b.setOnMouseEntered(e -> b.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-cursor: hand; -fx-font-size: 12px; -fx-text-fill: #333333;"));
-        b.setOnMouseExited(e -> b.setStyle("-fx-background-color: transparent; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-cursor: hand; -fx-font-size: 12px; -fx-text-fill: #333333;"));
+        b.setStyle("""
+            -fx-background-color: transparent; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-cursor: hand; -fx-font-size: 12px; -fx-text-fill: #333333;
+            """);
+
+        b.setOnMouseEntered(e -> 
+            b.setStyle("""
+                -fx-background-color: #f0f0f0; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-cursor: hand; -fx-font-size: 12px; -fx-text-fill: #333333;
+            """));
+            
+        b.setOnMouseExited(e -> 
+            b.setStyle("""
+                -fx-background-color: transparent; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-cursor: hand; -fx-font-size: 12px; -fx-text-fill: #333333;
+            """));
         return b;
     }
 
@@ -99,7 +114,9 @@ public class stylings {
         tf.setTranslateX(x);
         tf.setTranslateY(y);
         tf.setPrefSize(width, 35);
-        tf.setStyle("-fx-background-color: transparent; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-padding: 5 10; -fx-font-size: 13px; -fx-text-fill: #333333;");
+        tf.setStyle("""
+            -fx-background-color: transparent; -fx-border-color: #d1d1d1; -fx-border-radius: 6; -fx-padding: 5 10; -fx-font-size: 13px; -fx-text-fill: #333333;
+            """);
         return tf;
     }
 
@@ -108,7 +125,9 @@ public class stylings {
         pane.setTranslateX(x);
         pane.setTranslateY(y);
         pane.setPrefSize(width, height);
-        pane.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12;");
+        pane.setStyle("""
+            -fx-background-color: #ffffff; -fx-background-radius: 12;
+        """);
         return pane;
     }
 
@@ -117,7 +136,9 @@ public class stylings {
         pane.setTranslateX(x);
         pane.setTranslateY(y);
         pane.setPrefSize(width, height);
-        pane.setStyle("-fx-background-color: #f7f6f2; -fx-background-radius: 8;");
+        pane.setStyle("""
+            -fx-background-color: #f7f6f2; -fx-background-radius: 8;
+        """);
         return pane;
     }
 
@@ -135,7 +156,9 @@ public class stylings {
         ta.setTranslateY(y);
         ta.setPrefSize(width, height);
         ta.setEditable(false);
-        ta.setStyle("-fx-control-inner-background: #2b2e33; -fx-text-fill: #a9b7c6; -fx-font-family: 'Consolas'; -fx-font-size: 12px; -fx-background-radius: 8; -fx-border-radius: 8;");
+        ta.setStyle("""
+            -fx-control-inner-background: #2b2e33; -fx-text-fill: #a9b7c6; -fx-font-family: 'Consolas'; -fx-font-size: 12px; -fx-background-radius: 8; -fx-border-radius: 8;
+            """);
         return ta;
     }
 }

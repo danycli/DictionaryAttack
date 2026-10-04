@@ -23,7 +23,7 @@ public class DictionaryAttackApp{
         // Background color of the entire app
         root.setStyle("-fx-background-color: #f5f4f1;");
         
-        // --- SIDEBAR ---
+        //SIDEBAR 
         Label titleLabel = stylings.label("🔒 Dictionary Attack Tool", 20, 20, 16, "#1a1a1a", true);
         Button attackNav = stylings.sidebarButton("🏠 Attack", 15, 60, true);
         Button settingsNav = stylings.sidebarButton("⚙ Settings", 15, 110, false);
@@ -31,7 +31,7 @@ public class DictionaryAttackApp{
         
         root.getChildren().addAll(titleLabel, attackNav, settingsNav, aboutNav);
         
-        // --- TARGET LOGIN PANE ---
+        // RGET LOGIN PANE
         Pane targetPane = stylings.cardPane(220, 20, 480, 200);
         Label targetTitle = stylings.label("🎯 Target Login", 20, 20, 16, "#1a1a1a", true);
         Label targetSub = stylings.label("Configure the target login endpoint and credentials.", 20, 45, 12, "#7a7a7a", false);
@@ -48,7 +48,7 @@ public class DictionaryAttackApp{
         
         targetPane.getChildren().addAll(targetTitle, targetSub, urlLbl, urlField, userLbl, userField, passLbl, passField);
         
-        // --- WORDLIST PANE ---
+        //WORDLIST PANE 
         Pane wordlistPane = stylings.cardPane(220, 240, 480, 250);
         Label wlTitle = stylings.label("📄 Wordlist", 20, 20, 16, "#1a1a1a", true);
         Label wlFileLbl = stylings.label("Wordlist File", 20, 55, 12, "#1a1a1a", false);
@@ -79,7 +79,7 @@ public class DictionaryAttackApp{
         
         wordlistPane.getChildren().addAll(wlTitle, wlFileLbl, wlField, browseBtn, statsBox, startAttackBtn);
         
-        // --- ATTACK LOG PANE ---
+        //ATTACK LOG PANE
         Pane logPane = stylings.cardPane(220, 510, 480, 220);
         Label logTitle = stylings.label("⌨ Attack Log", 20, 20, 16, "#1a1a1a", true);
         Button clearBtn = stylings.secondaryButton("🗑 Clear", 390, 15, 70, 30);
@@ -87,7 +87,7 @@ public class DictionaryAttackApp{
         
         logPane.getChildren().addAll(logTitle, clearBtn, logArea);
         
-        // --- ATTACK PROGRESS PANE ---
+        //ATTACK PROGRESS PANE
         Pane progressPane = stylings.cardPane(720, 20, 360, 310);
         Label progTitle = stylings.label("📊 Attack Progress", 20, 20, 16, "#1a1a1a", true);
         Button readyBadge = stylings.secondaryButton("● Ready", 270, 15, 70, 25);
@@ -106,22 +106,22 @@ public class DictionaryAttackApp{
         Label candVal = stylings.label("-", 45, 30, 14, "#1a1a1a", true);
         candidateBox.getChildren().addAll(candIcon, candLbl, candVal);
         
-        Pane c1 = stylings.secondaryButton("", 20, 210, 70, 80); c1.setStyle(c1.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
+        Button c1 = stylings.secondaryButton("", 20, 210, 70, 80); c1.setStyle(c1.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c1Icon = stylings.label("#", 50, 220, 16, "#1a1a1a", true);
         Label c1Val = stylings.label("0", 50, 245, 14, "#1a1a1a", true);
         Label c1Lbl = stylings.label("Attempts", 30, 265, 11, "#7a7a7a", false);
         
-        Pane c2 = stylings.secondaryButton("", 100, 210, 80, 80); c2.setStyle(c2.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
+        Button c2 = stylings.secondaryButton("", 100, 210, 80, 80); c2.setStyle(c2.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c2Icon = stylings.label("🕒", 130, 220, 16, "#1a1a1a", false);
         Label c2Val = stylings.label("00:00:00", 115, 245, 14, "#1a1a1a", true);
         Label c2Lbl = stylings.label("Elapsed Time", 108, 265, 11, "#7a7a7a", false);
         
-        Pane c3 = stylings.secondaryButton("", 190, 210, 85, 80); c3.setStyle(c3.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
+        Button c3 = stylings.secondaryButton("", 190, 210, 85, 80); c3.setStyle(c3.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c3Icon = stylings.label("🚀", 225, 220, 16, "#1a1a1a", false);
         Label c3Val = stylings.label("0", 228, 245, 14, "#1a1a1a", true);
         Label c3Lbl = stylings.label("Attempts/sec", 198, 265, 11, "#7a7a7a", false);
         
-        Pane c4 = stylings.secondaryButton("", 285, 210, 75, 80); c4.setStyle(c4.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
+        Button c4 = stylings.secondaryButton("", 285, 210, 75, 80); c4.setStyle(c4.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c4Icon = stylings.label("📄", 315, 220, 16, "#1a1a1a", false);
         Label c4Val = stylings.label("0", 318, 245, 14, "#1a1a1a", true);
         Label c4Lbl = stylings.label("Current Line", 290, 265, 11, "#7a7a7a", false);
@@ -132,7 +132,7 @@ public class DictionaryAttackApp{
                 c3, c3Icon, c3Val, c3Lbl,
                 c4, c4Icon, c4Val, c4Lbl);
                 
-        // --- RESULT PANE ---
+        //RESULT PANE
         Pane resultPane = stylings.cardPane(720, 350, 360, 380);
         Label resTitle = stylings.label("🏆 Result", 20, 20, 16, "#1a1a1a", true);
         
