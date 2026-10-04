@@ -1,6 +1,8 @@
 package main;
 
 import controller.AttackController;
+import java.io.File;
+import java.util.ArrayList;
 import styling.stylings;
 
 import javafx.scene.Scene;
@@ -15,6 +17,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class DictionaryAttackApp{
+    TextField passField = null;
+    TextArea logArea = null;
+    Label pctLbl = null;
     //dashboard
     public void dashboard(AttackController attack){
         Stage stage = new Stage();
@@ -38,14 +43,15 @@ public class DictionaryAttackApp{
         Label targetSub = stylings.label("Configure the target login endpoint and credentials.", 20, 45, 12, "#7a7a7a", false);
         
         Label urlLbl = stylings.label("Login URL", 20, 75, 12, "#1a1a1a", false);
-        TextField urlField = stylings.textField("http://localhost:8080/login", "http://localhost:8080/login", 20, 95, 440);
+        TextField urlField = stylings.textField("http://127.0.0.1:3000/login", "http://127.0.0.1:3000/login", 20, 95, 440);
         
         Label userLbl = stylings.label("Username", 20, 140, 12, "#1a1a1a", false);
         TextField userField = stylings.textField("admin", "admin", 20, 160, 210);
         
         Label passLbl = stylings.label("Password (Leave empty)", 250, 140, 12, "#1a1a1a", false);
-        TextField passField = stylings.textField("Not required (will be guessed)", "", 250, 160, 210);
+        passField = stylings.textField("Not required (will be guessed)", "", 250, 160, 210);
         passField.setPromptText("Not required (will be guessed)");
+        passField.setEditable(false);
         
         targetPane.getChildren().addAll(targetTitle, targetSub, urlLbl, urlField, userLbl, userField, passLbl, passField);
         
@@ -53,7 +59,7 @@ public class DictionaryAttackApp{
         Pane wordlistPane = stylings.cardPane(220, 240, 480, 250);
         Label wlTitle = stylings.label("📄 Wordlist", 20, 20, 16, "#1a1a1a", true);
         Label wlFileLbl = stylings.label("Wordlist File", 20, 55, 12, "#1a1a1a", false);
-        TextField wlField = stylings.textField("C:\\Wordlists\\rockyou-small.txt", "C:\\Wordlists\\rockyou-small.txt", 20, 75, 340);
+        TextField wlField = stylings.textField("C:\\VS Code\\DictionaryAttack\\wordlists\\wordList1.txt", "C:\\VS Code\\DictionaryAttack\\wordlists\\wordList1.txt", 20, 75, 340);
         Button browseBtn = stylings.secondaryButton("📁 Browse", 370, 75, 90, 35);
         
         // Stats area
@@ -76,23 +82,14 @@ public class DictionaryAttackApp{
         
         statsBox.getChildren().addAll(statIcon, wordsCount, wordsLbl, sep1, sizeCount, sizeLbl, sep2, fmtCount, fmtLbl);
         
-        Button startAttackBtn = stylings.primaryButton("▶ Start Attack", 20, 195, 440, 40);
-        //starting the attack
-        
+        Button startAttackBtn = stylings.primaryButton("▶ Start Attack", 20, 195, 440, 40);        
         wordlistPane.getChildren().addAll(wlTitle, wlFileLbl, wlField, browseBtn, statsBox, startAttackBtn);
-
-        startAttackBtn.setOnAction(e -> {
-            System.out.println("ActionFired");
-            AttackController at = new AttackController();
-            at.start(wlField.getText());
-        });
-        
         
         //ATTACK LOG PANE
         Pane logPane = stylings.cardPane(220, 510, 480, 220);
         Label logTitle = stylings.label("⌨ Attack Log", 20, 20, 16, "#1a1a1a", true);
         Button clearBtn = stylings.secondaryButton("🗑 Clear", 390, 15, 70, 30);
-        TextArea logArea = stylings.logArea("Nothing Happened yet", 20, 55, 440, 145);
+        logArea = stylings.logArea("Nothing Happened yet", 20, 55, 440, 145);
         
         logPane.getChildren().addAll(logTitle, clearBtn, logArea);
         
@@ -102,7 +99,7 @@ public class DictionaryAttackApp{
         Button readyBadge = stylings.secondaryButton("● Ready", 270, 15, 70, 25);
         readyBadge.setStyle(readyBadge.getStyle() + "-fx-background-color: #f0f0f0; -fx-border-width: 0;");
         
-        Label pctLbl = stylings.label("--%", 20, 65, 24, "#1a1a1a", true);
+        pctLbl = stylings.label("--%", 20, 65, 24, "#1a1a1a", true);
         Label progressTxt = stylings.label("0 / ---", 280, 75, 12, "#7a7a7a", false);
         
         Rectangle progBg = new Rectangle(320, 12, Color.web("#e0e0e0"));
@@ -204,5 +201,57 @@ public class DictionaryAttackApp{
             stage.setX(event.getScreenX() - xOffset[0]);
             stage.setY(event.getScreenY() - yOffset[0]);
         });
+
+        //Storing the passwords in an Arraylistfor UI info
+        if(wlField.getText() != null){
+            AttackController pass = new AttackController();
+            ArrayList<String> passwords = pass.getPasswords(wlField.getText());
+            //setting word count
+            wordsCount.setText(""+passwords.size());
+            //setting file size
+            File file = new File(wlField.getText());
+            double size = file.length();
+            //Concerting in to KB from bytes
+            size /= (1024.0);
+            //Rounding off to three decimal place
+            size  = Math.round(size * 1000.0)/1000.0;
+            sizeCount.setText(""+size+" KB");
+            //Getting format
+            String[] sp = wlField.getText().split("");
+            String format = null;
+            for(String n : sp){
+                if (format != null || n.equals(".")) {
+                    if (format == null) {
+                        format = "";
+                    }
+                    format += n;
+                }
+            }
+            fmtCount.setText(format);
+        }
+
+        //Buttons Actions
+        clearBtn.setOnAction(e ->{
+            logArea.clear();
+        });
+
+        startAttackBtn.setOnAction(e -> {
+            logArea.clear();
+            AttackController at = new AttackController();
+            at.start(wlField.getText(), userField.getText(), urlField.getText(), this);
+        });
+
+    }
+    //setter for password field
+    public void setpassField(String pass){
+        passField.setText(pass);
+    }
+    //appending log area
+    public void appendLogArea(String text){
+        logArea.appendText(text);
+    }
+    //setter for progress level
+    public void setpctLbl(String text){
+        pctLbl.setText(text+"%");
     }
 }
