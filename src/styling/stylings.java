@@ -3,6 +3,7 @@ package styling;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
@@ -163,4 +164,20 @@ public class stylings {
             """);
         return ta;
     }
+    //For progress bar
+    public static ProgressBar progressBar(int x, int y, int width, int height) {
+
+    ProgressBar p = new ProgressBar(0);
+
+    p.setTranslateX(x);
+    p.setTranslateY(y);
+    p.setPrefSize(width, height);
+    p.setStyle("""
+        -fx-accent: #1a1a1a;
+        -fx-control-inner-background: #e6e6e6;
+        -fx-background-radius: 8;
+        """);
+
+    return p;
+}
 }

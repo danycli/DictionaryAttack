@@ -9,6 +9,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import main.DictionaryAttackApp;
 
@@ -20,18 +21,49 @@ public class AttackController extends Application{
     }
 
     //start the engine
-    public void start(String path, String username, String url, DictionaryAttackApp dic){
+    public void start(String path, String username, String url, DictionaryAttackApp dic, long start){
 
+        Task<Void> attackTask = new Task<Void>() {
+            @Override 
+            protected Void call(){
+                runAttack(path, username, url, dic, start);
+                return null;
+            }
+        };
+        Thread attackThread = new Thread(attackTask);
+        attackThread.setDaemon(true);
+        attackThread.start();
+    }
+    //Core logic/ Engine
+    private void runAttack(String path, String username, String url, DictionaryAttackApp dic, long start){
         ArrayList<String> passwords = getPasswords(path);
+        double size = passwords.size();
 
         //Creating HTTP client
         HttpClient client = HttpClient.newHttpClient();
 
-        int obt = 1;
+        double obt = 1;
         for(String pass : passwords){
             String jsonPayload = String.format("{\"username\": \""+username+"\", \"password\": \""+pass+"\"}");
             dic.appendLogArea("PayLoad = "+ jsonPayload+"\n");
-            dic.setpctLbl(""+(obt/passwords.size())*100);
+            dic.setc1Val(""+(int)obt);
+            dic.setc4Val(""+(int)obt);
+            dic.setcandVal(pass);
+            //Visualizing elapsed time
+            long end = System.currentTimeMillis();
+            long elapsedTime = end - start;
+            long mins = elapsedTime / 6000;
+            long sec = (elapsedTime % 6000)/1000;
+            long ms = elapsedTime % 1000;
+            dic.setc2Val(""+mins+":"+sec+":"+ms);
+            double attemptMS = obt / (double)ms;
+            attemptMS = Math.round(attemptMS * 1000.0) / 1000.0;
+            dic.setc3Val(""+attemptMS);
+            //showing percentage on the dashboard
+            double percentage = Math.round(((obt/size)*100.0) * 100.0) / 100.0;
+            dic.setpctLbl(""+percentage);
+            //progressbasr setter 
+            dic.setprogressBar(percentage);
             obt++;
             // System.out.println("Json Payload:"+jsonPayload);
             //building post request
