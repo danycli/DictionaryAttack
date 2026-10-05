@@ -24,6 +24,10 @@ if (typeof window === 'undefined') {
     };
 
     const server = http.createServer((req, res) => {
+        // Performance optimizations for high-throughput dictionary attacks
+        req.socket.setNoDelay(true); // Disable Nagle's algorithm for lowest possible latency
+        res.setHeader('Connection', 'keep-alive'); // Heavily encourage TCP socket reuse
+
         // Enable CORS in case the Java application or other clients require it for local testing
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -62,7 +66,7 @@ if (typeof window === 'undefined') {
                 }
 
                 // Hardcoded dummy credentials for local lab
-                if (parsed.username === 'admin' && parsed.password === 'dragon123') {
+                if (parsed.username === 'admin' && parsed.password === 'The_Goat_CR7') {
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
                         success: true,
@@ -88,7 +92,7 @@ if (typeof window === 'undefined') {
     server.listen(PORT, '127.0.0.1', () => {
         console.log(`[Dictionary Attack Lab] Local server running at http://127.0.0.1:${PORT}/`);
         console.log(`[API Endpoint] POST http://127.0.0.1:${PORT}/login`);
-        console.log(`[Credentials] Username: admin | Password: dragon123`);
+        console.log(`[Credentials] Username: admin | Password: The_Goat_CR7`);
     });
 
 } else {
