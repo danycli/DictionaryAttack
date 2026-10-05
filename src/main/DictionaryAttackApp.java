@@ -2,7 +2,6 @@ package main;
 
 import controller.AttackController;
 import java.io.File;
-import java.util.ArrayList;
 import styling.stylings;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -27,6 +26,11 @@ public class DictionaryAttackApp{
     Label c4Val = null;
     Label c3Val = null;
     ProgressBar progressBar = null;
+    TextField wlField = null;
+    Label wordsCount = null;
+    Label sizeCount = null;
+    Label fmtCount = null;
+    private boolean termination = false;
     //dashboard
     public void dashboard(AttackController attack){
         Stage stage = new Stage();
@@ -64,32 +68,37 @@ public class DictionaryAttackApp{
         Pane wordlistPane = stylings.cardPane(220, 240, 480, 250);
         Label wlTitle = stylings.label("📄 Wordlist", 20, 20, 16, "#1a1a1a", true);
         Label wlFileLbl = stylings.label("Wordlist File", 20, 55, 12, "#1a1a1a", false);
-        TextField wlField = stylings.textField("C:\\VS Code\\DictionaryAttack\\wordlists\\wordList1.txt", "C:\\VS Code\\DictionaryAttack\\wordlists\\wordList1.txt", 20, 75, 340);
+        wlField = stylings.textField("C:\\VS Code\\DictionaryAttack\\wordlists\\rockyou.txt", "C:\\VS Code\\DictionaryAttack\\wordlists\\rockyou.txt", 20, 75, 340);
         Button browseBtn = stylings.secondaryButton("📁 Browse", 370, 75, 90, 35);
         
         // Stats area
         Pane statsBox = stylings.innerCard(20, 130, 440, 50);
         Label statIcon = stylings.label("📄", 15, 15, 18, "#1a1a1a", false);
-        Label wordsCount = stylings.label("----", 60, 10, 14, "#1a1a1a", true);
+        wordsCount = stylings.label("----", 60, 10, 14, "#1a1a1a", true);
         Label wordsLbl = stylings.label("Total Words", 60, 27, 11, "#7a7a7a", false);
         
         Rectangle sep1 = new Rectangle(1, 30, Color.web("#d1d1d1"));
         sep1.setTranslateX(160); sep1.setTranslateY(10);
         
-        Label sizeCount = stylings.label("---", 180, 10, 14, "#1a1a1a", true);
+        sizeCount = stylings.label("---", 180, 10, 14, "#1a1a1a", true);
         Label sizeLbl = stylings.label("File Size", 180, 27, 11, "#7a7a7a", false);
         
         Rectangle sep2 = new Rectangle(1, 30, Color.web("#d1d1d1"));
         sep2.setTranslateX(280); sep2.setTranslateY(10);
         
-        Label fmtCount = stylings.label("---", 300, 10, 14, "#1a1a1a", true);
+        fmtCount = stylings.label("---", 300, 10, 14, "#1a1a1a", true);
         Label fmtLbl = stylings.label("Format", 300, 27, 11, "#7a7a7a", false);
-        
+
         statsBox.getChildren().addAll(statIcon, wordsCount, wordsLbl, sep1, sizeCount, sizeLbl, sep2, fmtCount, fmtLbl);
         
-        Button startAttackBtn = stylings.primaryButton("▶ Start Attack", 20, 195, 440, 40);        
-        wordlistPane.getChildren().addAll(wlTitle, wlFileLbl, wlField, browseBtn, statsBox, startAttackBtn);
+        Button stopAttack = stylings.primaryButton("❚❚ Pause", 20, 195, 140, 40);
+        Button startAttackBtn = stylings.primaryButton("▶ Start Attack", 166, 195, 140, 40);
+        Button resumeAttack = stylings.primaryButton("⏹ Resume", 312, 195, 140, 40);
+        wordlistPane.getChildren().addAll(wlTitle, wlFileLbl, wlField, browseBtn, statsBox, startAttackBtn, stopAttack, resumeAttack);
         
+        stopAttack.setDisable(true);
+        resumeAttack.setDisable(true);
+
         //ATTACK LOG PANE
         Pane logPane = stylings.cardPane(220, 510, 480, 220);
         Label logTitle = stylings.label("⌨ Attack Log", 20, 20, 16, "#1a1a1a", true);
@@ -99,7 +108,7 @@ public class DictionaryAttackApp{
         logPane.getChildren().addAll(logTitle, clearBtn, logArea);
         
         //ATTACK PROGRESS PANE
-        Pane progressPane = stylings.cardPane(720, 20, 360, 310);
+        Pane progressPane = stylings.cardPane(720, 20, 360, 370);
         Label progTitle = stylings.label("📊 Attack Progress", 20, 20, 16, "#1a1a1a", true);
         
         pctLbl = stylings.label("--%", 20, 65, 24, "#1a1a1a", true);
@@ -116,7 +125,7 @@ public class DictionaryAttackApp{
         
         Button c1 = stylings.secondaryButton("", 20, 210, 70, 80); c1.setStyle(c1.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c1Icon = stylings.label("#", 50, 220, 16, "#1a1a1a", true);
-        c1Val = stylings.label("0", 50, 245, 14, "#1a1a1a", true);
+        c1Val = stylings.label("0", 42, 245, 14, "#1a1a1a", true);
         Label c1Lbl = stylings.label("Attempts", 30, 265, 11, "#7a7a7a", false);
         
         Button c2 = stylings.secondaryButton("", 100, 210, 80, 80); c2.setStyle(c2.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
@@ -131,46 +140,20 @@ public class DictionaryAttackApp{
         
         Button c4 = stylings.secondaryButton("", 285, 210, 75, 80); c4.setStyle(c4.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c4Icon = stylings.label("📄", 315, 220, 16, "#1a1a1a", false);
-        c4Val = stylings.label("---", 318, 245, 14, "#1a1a1a", true);
+        c4Val = stylings.label("---", 310, 245, 14, "#1a1a1a", true);
         Label c4Lbl = stylings.label("Current Line", 290, 265, 11, "#7a7a7a", false);
         
-        progressPane.getChildren().addAll(progTitle, pctLbl, progressBar, candidateBox,
+        Button terminateAttack = stylings.primaryButton("✗ Terminate", 110, 310, 140, 40); 
+        terminateAttack.setDisable(true);
+
+        progressPane.getChildren().addAll(progTitle, pctLbl, progressBar, candidateBox,terminateAttack,
                 c1, c1Icon, c1Val, c1Lbl,
                 c2, c2Icon, c2Val, c2Lbl,
                 c3, c3Icon, c3Val, c3Lbl,
                 c4, c4Icon, c4Val, c4Lbl);
                 
-        // //RESULT PANE
-        // Pane resultPane = stylings.cardPane(720, 350, 360, 380);
-        // Label resTitle = stylings.label("🏆 Result", 20, 20, 16, "#1a1a1a", true);
-        
-        // Pane emptyBox = stylings.innerCard(20, 60, 320, 80);
-        // Label emptyHyphen = stylings.label("-", 175, 75, 18, "#1a1a1a", true);
-        // Label emptyTxt = stylings.label("Attack not started yet.", 110, 105, 12, "#7a7a7a", false);
-        // emptyBox.getChildren().addAll(emptyHyphen, emptyTxt);
-        
-        // Label r1 = stylings.label("Found Password", 20, 170, 12, "#1a1a1a", false); Label r1v = stylings.label("-", 330, 170, 12, "#1a1a1a", true);
-        // Rectangle s1 = new Rectangle(320, 1, Color.web("#f0f0f0")); s1.setTranslateX(20); s1.setTranslateY(195);
-        
-        // Label r2 = stylings.label("Line Number", 20, 210, 12, "#1a1a1a", false); Label r2v = stylings.label("-", 330, 210, 12, "#1a1a1a", true);
-        // Rectangle s2 = new Rectangle(320, 1, Color.web("#f0f0f0")); s2.setTranslateX(20); s2.setTranslateY(235);
-        
-        // Label r3 = stylings.label("Total Attempts", 20, 250, 12, "#1a1a1a", false); Label r3v = stylings.label("-", 330, 250, 12, "#1a1a1a", true);
-        // Rectangle s3 = new Rectangle(320, 1, Color.web("#f0f0f0")); s3.setTranslateX(20); s3.setTranslateY(275);
-        
-        // Label r4 = stylings.label("Time Taken", 20, 290, 12, "#1a1a1a", false); Label r4v = stylings.label("-", 330, 290, 12, "#1a1a1a", true);
-        // Rectangle s4 = new Rectangle(320, 1, Color.web("#f0f0f0")); s4.setTranslateX(20); s4.setTranslateY(315);
-        
-        // Label r5 = stylings.label("Attempts / Second", 20, 330, 12, "#1a1a1a", false); Label r5v = stylings.label("-", 330, 330, 12, "#1a1a1a", true);
-        
-        // resultPane.getChildren().addAll(resTitle, emptyBox, 
-        //         r1, r1v, s1,
-        //         r2, r2v, s2,
-        //         r3, r3v, s3,
-        //         r4, r4v, s4,
-        //         r5, r5v);
 
-        // // Add panes to root
+        // Add panes to root
         root.getChildren().addAll(targetPane, wordlistPane, logPane, progressPane);
         
         // Window Control (Close Button since undecorated)
@@ -205,19 +188,136 @@ public class DictionaryAttackApp{
         });
 
         //Storing the passwords in an Arraylistfor UI info
+        updateUI();
+
+        //Buttons Actions
+        clearBtn.setOnAction(e ->{
+            logArea.clear();
+        });
+
+        startAttackBtn.setOnAction(e -> {
+            termination = false;
+            stopAttack.setDisable(false);
+            startAttackBtn.setDisable(true);
+            terminateAttack.setDisable(false);
+            updateUI();
+            long startTime = System.currentTimeMillis();
+            logArea.clear();
+            AttackController at = new AttackController();
+            at.start(wlField.getText(), userField.getText(), urlField.getText(), this, startTime, termination);
+        });
+
+        stopAttack.setOnAction(e ->{
+            resumeAttack.setDisable(false);
+            stopAttack.setDisable(true);
+            startAttackBtn.setDisable(true);
+        });
+
+        resumeAttack.setOnAction(e ->{
+            stopAttack.setDisable(false);
+            startAttackBtn.setDisable(true);
+            resumeAttack.setDisable(true);
+        });
+
+        terminateAttack.setOnAction(e ->{
+            stopAttack.setDisable(true);
+            resumeAttack.setDisable(true);
+            startAttackBtn.setDisable(false);
+
+            setTerm(true);
+        });
+    }
+    //Now as we use Task to make the threads separated so we have to modify the javaFX components using runlater
+
+    public void updateAttackUI(
+        String attempt,
+        String elapsed,
+        String password,
+        double percentage, String currentL) {
+
+    Platform.runLater(() -> {
+
+        c1Val.setText(attempt);
+        c2Val.setText(elapsed);
+        candVal.setText(password);
+        pctLbl.setText("" + percentage);
+        progressBar.setProgress(percentage / 100.0);
+        c4Val.setText(currentL);
+    });
+}
+
+    //setter for attempts per second
+    public void setc3Val(String text){
+        Platform.runLater(() ->{
+            c3Val.setText(text);
+        });
+    }
+    //setter for password field
+    public void setpassField(String pass){
+        Platform.runLater(() ->{
+            passField.setText(pass);
+        });
+    }
+    //appending log area
+    public void appendLogArea(String text){
+        Platform.runLater(() ->{
+            logArea.appendText(text);
+        });
+    }
+    //setter for LogArea to set it after thousand entries
+    public void setLogArea(String txt){
+        Platform.runLater(() ->{
+            logArea.setText(txt);
+        });
+    }
+    //getter for termination boolean
+    public boolean getTerm(){
+        return this.termination;
+    }
+    //setter for termination boolean
+    public void setTerm(boolean b){
+        Platform.runLater(() ->{
+            termination = b;
+        });
+    }
+
+    //Updating the UI
+    public void updateUI(){
         if(wlField.getText() != null){
             AttackController pass = new AttackController();
-            ArrayList<String> passwords = pass.getPasswords(wlField.getText());
+            // ArrayList<String> passwords = pass.getPasswords(wlField.getText());
+            int count = pass.getPasswords(wlField.getText());
             //setting word count
-            wordsCount.setText(""+passwords.size());
+            if(count >= 1000000){
+                double c = ((double)count)/1000000.0;
+                c = Math.round(c * 100.0)/100.0;
+                wordsCount.setText(c+"M");
+            }else if(count >= 1000){
+                double c = ((double)count)/1000.0;
+                c = Math.round(c * 100.0)/100.0;
+                wordsCount.setText(c+"K");
+            }else{
+                wordsCount.setText(""+count);
+            }
+
             //setting file size
             File file = new File(wlField.getText());
             double size = file.length();
-            //Concerting in to KB from bytes
-            size /= (1024.0);
-            //Rounding off to three decimal place
-            size  = Math.round(size * 1000.0)/1000.0;
-            sizeCount.setText(""+size+" KB");
+            size = Math.round(size * 1000.0)/1000.0;
+            //Converting in to KB from bytes
+            if(size >= 1048576.0){
+                size /= 1048576.0;
+                size = Math.round(size * 1000.0)/1000.0;
+                sizeCount.setText(""+size+" MB");
+                
+            }else if(size >= 1024.0){
+                size /= 1024.0;
+                size = Math.round(size * 1000.0)/1000.0;
+                sizeCount.setText(""+size+" KB");
+            }else{
+                sizeCount.setText(""+size+" bytes");
+            }
+
             //Getting format
             String[] sp = wlField.getText().split("");
             String format = null;
@@ -231,73 +331,5 @@ public class DictionaryAttackApp{
             }
             fmtCount.setText(format);
         }
-
-        //Buttons Actions
-        clearBtn.setOnAction(e ->{
-            logArea.clear();
-        });
-
-        startAttackBtn.setOnAction(e -> {
-            long startTime = System.currentTimeMillis();
-            logArea.clear();
-            AttackController at = new AttackController();
-            at.start(wlField.getText(), userField.getText(), urlField.getText(), this, startTime);
-        });
-
-    }
-    //Now as we use Task to make the threads separated so we have to modify the javaFX components using runlater
-    //setter for password field
-    public void setpassField(String pass){
-        Platform.runLater(() ->{
-            passField.setText(pass);
-        });
-    }
-    //appending log area
-    public void appendLogArea(String text){
-        Platform.runLater(() ->{
-            logArea.appendText(text);
-        });
-    }
-    //setter for progress level
-    public void setpctLbl(String text){
-        Platform.runLater(() ->{
-            pctLbl.setText(text+"%");
-        });
-    }
-    //setter for current Candidate
-    public void setcandVal(String text){
-        Platform.runLater(() ->{
-            candVal.setText(text);
-        });
-    }
-    //setter for attempts
-    public void setc1Val(String text){
-        Platform.runLater(() ->{
-            c1Val.setText(text);
-        });
-    }
-    //Setter for time elapsed
-    public void setc2Val(String text){
-        Platform.runLater(() ->{
-            c2Val.setText(text);
-        });
-    }
-    //Setter for current line
-    public void setc4Val(String text){
-        Platform.runLater(() ->{
-            c4Val.setText(text);
-        });
-    }
-    //setter for attempts/ms
-    public void setc3Val(String text){
-        Platform.runLater(() ->{
-            c3Val.setText(text);
-        });
-    }
-    //setter for progressbar
-    public void setprogressBar(double percentage){
-        Platform.runLater(() ->{
-            progressBar.setProgress(percentage/100.0);
-        });
     }
 }
