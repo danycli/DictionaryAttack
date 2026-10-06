@@ -34,6 +34,10 @@ public class DictionaryAttackApp{
     private Stage stage;
     private Pane root;
     private Scene scene;
+    private Button stopAttack;
+    private Button startAttackBtn;
+    private Button resumeAttack;
+    private Button terminateAttack;
     //dashboard
     public void dashboard(AttackController attack){
         stage = new Stage();
@@ -55,6 +59,7 @@ public class DictionaryAttackApp{
         Label targetSub = stylings.label("Configure the target login endpoint and credentials.", 20, 45, 12, "#7a7a7a", false);
         
         Label urlLbl = stylings.label("Login URL", 20, 75, 12, "#1a1a1a", false);
+        //https://slnsnexsphdsnknskjyn.supabase.co/auth/v1/token?grant_type=password
         TextField urlField = stylings.textField("http://127.0.0.1:3000/login", "http://127.0.0.1:3000/login", 20, 95, 440);
         
         Label userLbl = stylings.label("Username", 20, 140, 12, "#1a1a1a", false);
@@ -71,7 +76,7 @@ public class DictionaryAttackApp{
         Pane wordlistPane = stylings.cardPane(220, 240, 480, 250);
         Label wlTitle = stylings.label("📄 Wordlist", 20, 20, 16, "#1a1a1a", true);
         Label wlFileLbl = stylings.label("Wordlist File", 20, 55, 12, "#1a1a1a", false);
-        wlField = stylings.textField("C:\\VS Code\\DictionaryAttack\\wordlists\\rockyou.txt", "C:\\VS Code\\DictionaryAttack\\wordlists\\rockyou.txt", 20, 75, 340);
+        wlField = stylings.textField("C:\\VS Code\\DictionaryAttack\\wordlists\\words.txt", "C:\\VS Code\\DictionaryAttack\\wordlists\\words.txt", 20, 75, 340);
         Button browseBtn = stylings.secondaryButton("📁 Browse", 370, 75, 90, 35);
         
         // Stats area
@@ -94,9 +99,9 @@ public class DictionaryAttackApp{
 
         statsBox.getChildren().addAll(statIcon, wordsCount, wordsLbl, sep1, sizeCount, sizeLbl, sep2, fmtCount, fmtLbl);
         
-        Button stopAttack = stylings.primaryButton("❚❚ Pause", 20, 195, 140, 40);
-        Button startAttackBtn = stylings.primaryButton("▶ Start Attack", 166, 195, 140, 40);
-        Button resumeAttack = stylings.primaryButton("⏹ Resume", 312, 195, 140, 40);
+        stopAttack = stylings.primaryButton("❚❚ Pause", 20, 195, 140, 40);
+        startAttackBtn = stylings.primaryButton("▶ Start Attack", 166, 195, 140, 40);
+        resumeAttack = stylings.primaryButton("⏹ Resume", 312, 195, 140, 40);
         wordlistPane.getChildren().addAll(wlTitle, wlFileLbl, wlField, browseBtn, statsBox, startAttackBtn, stopAttack, resumeAttack);
         
         stopAttack.setDisable(true);
@@ -146,7 +151,7 @@ public class DictionaryAttackApp{
         c4Val = stylings.label("---", 310, 245, 14, "#1a1a1a", true);
         Label c4Lbl = stylings.label("Current Line", 290, 265, 11, "#7a7a7a", false);
         
-        Button terminateAttack = stylings.primaryButton("✗ Terminate", 110, 310, 140, 40); 
+        terminateAttack = stylings.primaryButton("✗ Terminate", 110, 310, 140, 40); 
         terminateAttack.setDisable(true);
 
         progressPane.getChildren().addAll(progTitle, pctLbl, progressBar, candidateBox,terminateAttack,
@@ -200,8 +205,6 @@ public class DictionaryAttackApp{
 
         startAttackBtn.setOnAction(e -> {
             if(termination){
-                // setpassField("");
-                // setc3Val("---");
                 attack.setobt(1);
                 updateAttackUI("---", "00:00:00", "--", 0, "---");
             }
@@ -341,5 +344,12 @@ public class DictionaryAttackApp{
             }
             fmtCount.setText(format);
         }
+    }
+    //setter for disabling/enabling the buttons
+    public void setButtons(boolean term, boolean resume, boolean start, boolean pause){
+        terminateAttack.setDisable(term);
+        resumeAttack.setDisable(resume);
+        startAttackBtn.setDisable(start);
+        stopAttack.setDisable(pause);
     }
 }

