@@ -54,7 +54,7 @@ public class AttackController extends Application{
         while((pass = reader.readLine()) != null && !(term)){
             checkPaused();
             term = dic.getTerm();
-            String jsonPayload = ("{\"username\": \""+username+"\", \"gotrue_meta_security\": \"{}\", \"password\": \""+pass+"\"}");
+            String jsonPayload = ("{\"username\": \""+username+"\", \"password\": \""+pass+"\"}");
             //Visualizing elapsed time
             long end = System.currentTimeMillis();
             long elapsedTime = end - start;
