@@ -17,25 +17,28 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class DictionaryAttackApp{
-    TextField passField = null;
-    TextArea logArea = null;
-    Label pctLbl = null;
-    Label candVal = null;
-    Label c1Val = null;
-    Label c2Val = null;
-    Label c4Val = null;
-    Label c3Val = null;
-    ProgressBar progressBar = null;
-    TextField wlField = null;
-    Label wordsCount = null;
-    Label sizeCount = null;
-    Label fmtCount = null;
+    private TextField passField = null;
+    private TextArea logArea = null;
+    private Label pctLbl = null;
+    private Label candVal = null;
+    private Label c1Val = null;
+    private Label c2Val = null;
+    private Label c4Val = null;
+    private Label c3Val = null;
+    private ProgressBar progressBar = null;
+    private TextField wlField = null;
+    private Label wordsCount = null;
+    private Label sizeCount = null;
+    private Label fmtCount = null;
     private boolean termination = false;
+    private Stage stage;
+    private Pane root;
+    private Scene scene;
     //dashboard
     public void dashboard(AttackController attack){
-        Stage stage = new Stage();
-        Pane root = new Pane();
-        Scene scene = new Scene(root, 1100, 750);
+        stage = new Stage();
+        root = new Pane();
+        scene = new Scene(root, 1100, 750);
         
         // Background color of the entire app
         root.setStyle("-fx-background-color: #f5f4f1;");
@@ -135,7 +138,7 @@ public class DictionaryAttackApp{
         
         Button c3 = stylings.secondaryButton("", 190, 210, 85, 80); c3.setStyle(c3.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
         Label c3Icon = stylings.label("🚀", 225, 220, 16, "#1a1a1a", false);
-        c3Val = stylings.label("---", 228, 245, 14, "#1a1a1a", true);
+        c3Val = stylings.label("---", 220, 245, 14, "#1a1a1a", true);
         Label c3Lbl = stylings.label("Attempts/ms", 198, 265, 11, "#7a7a7a", false);
         
         Button c4 = stylings.secondaryButton("", 285, 210, 75, 80); c4.setStyle(c4.getStyle() + "-fx-background-color: transparent; -fx-border-color: #f0f0f0;");
@@ -196,6 +199,12 @@ public class DictionaryAttackApp{
         });
 
         startAttackBtn.setOnAction(e -> {
+            if(termination){
+                // setpassField("");
+                // setc3Val("---");
+                attack.setobt(1);
+                updateAttackUI("---", "00:00:00", "--", 0, "---");
+            }
             termination = false;
             stopAttack.setDisable(false);
             startAttackBtn.setDisable(true);
@@ -203,17 +212,18 @@ public class DictionaryAttackApp{
             updateUI();
             long startTime = System.currentTimeMillis();
             logArea.clear();
-            AttackController at = new AttackController();
-            at.start(wlField.getText(), userField.getText(), urlField.getText(), this, startTime, termination);
+            attack.start(wlField.getText(), userField.getText(), urlField.getText(), this, startTime, termination);
         });
 
         stopAttack.setOnAction(e ->{
+            attack.pauseAttack();
             resumeAttack.setDisable(false);
             stopAttack.setDisable(true);
             startAttackBtn.setDisable(true);
         });
 
         resumeAttack.setOnAction(e ->{
+            attack.resumeAttack();
             stopAttack.setDisable(false);
             startAttackBtn.setDisable(true);
             resumeAttack.setDisable(true);
@@ -223,7 +233,7 @@ public class DictionaryAttackApp{
             stopAttack.setDisable(true);
             resumeAttack.setDisable(true);
             startAttackBtn.setDisable(false);
-
+            attack.resumeAttack();
             setTerm(true);
         });
     }
@@ -240,7 +250,7 @@ public class DictionaryAttackApp{
         c1Val.setText(attempt);
         c2Val.setText(elapsed);
         candVal.setText(password);
-        pctLbl.setText("" + percentage);
+        pctLbl.setText(percentage+"%");
         progressBar.setProgress(percentage / 100.0);
         c4Val.setText(currentL);
     });

