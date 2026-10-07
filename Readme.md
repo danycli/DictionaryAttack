@@ -390,12 +390,6 @@ The author is not responsible for misuse, unauthorized access, data loss, servic
 
 Always obtain permission before testing a system you do not own.
 
-## License
-
-If you publish this repository publicly, add the license that matches how you want others to use, modify, and redistribute the project.
-
-For example, a permissive open-source project could use the MIT License. If you choose MIT, add a `LICENSE` file containing the official MIT License text and replace this section with the appropriate copyright holder and year.
-
 ---
 
 **Dictionary Attack Lab**  
